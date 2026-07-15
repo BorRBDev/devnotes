@@ -40,3 +40,6 @@ vite.config.ts.timestamp-*.mjs
 
 # Guiones del formador (no se comparten con los alumnos)
 guion-formador/
+
+# Estado temporal de la CLI de Supabase (no versionar)
+supabase/.temp/

@@ -1,28 +1,38 @@
-import { useEffect, useState } from 'react'
-import NoteForm from '../components/NoteForm.jsx'
-import NoteCard from '../components/NoteCard.jsx'
-import { listNotes, createNote, deleteNote } from '../lib/notes.js'
+import { useEffect, useState } from "react";
+import NoteForm from "../components/NoteForm.jsx";
+import NoteCard from "../components/NoteCard.jsx";
+import {
+  listNotes,
+  createNote,
+  deleteNote,
+  getNotesStats,
+} from "../lib/notes.js";
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   async function refresh() {
-    setNotes(await listNotes())
+    setNotes(await listNotes());
   }
+  useEffect(() => {
+    getNotesStats()
+      .then((r) => console.log("stats:", r))
+      .catch((e) => console.log("stats error:", e));
+  }, []);
 
   useEffect(() => {
-    refresh().finally(() => setLoading(false))
-  }, [])
+    refresh().finally(() => setLoading(false));
+  }, []);
 
   async function handleCreate(data) {
-    await createNote(data)
-    await refresh()
+    await createNote(data);
+    await refresh();
   }
 
   async function handleDelete(id) {
-    await deleteNote(id)
-    await refresh()
+    await deleteNote(id);
+    await refresh();
   }
 
   return (
@@ -41,5 +51,5 @@ export default function NotesPage() {
         </div>
       )}
     </section>
-  )
+  );
 }
