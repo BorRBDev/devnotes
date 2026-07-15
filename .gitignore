@@ -37,3 +37,6 @@ coverage
 # Temporales de Vite
 vite.config.js.timestamp-*.mjs
 vite.config.ts.timestamp-*.mjs
+
+# Guiones del formador (no se comparten con los alumnos)
+guion-formador/

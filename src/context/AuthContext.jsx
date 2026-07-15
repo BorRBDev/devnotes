@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient.js'
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase, isSupabaseConfigured } from "../lib/supabaseClient.js";
 
 // ============================================================================
 // Contexto de autenticación — Semana 1, Sesión 1
@@ -15,48 +15,46 @@ import { supabase, isSupabaseConfigured } from '../lib/supabaseClient.js'
 //        - supabase.auth.onAuthStateChange(...) para escuchar la sesión
 // ============================================================================
 
-const AuthContext = createContext(null)
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isSupabaseConfigured) {
-      // TODO (Sesión 1): recuperar la sesión actual y suscribirse a los cambios.
-      // const { data } = supabase.auth.onAuthStateChange((_e, session) => {
-      //   setUser(session?.user ?? null)
-      // })
-      // return () => data.subscription.unsubscribe()
-    }
-    setLoading(false)
-  }, [])
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
-  async function signIn(email /*, password */) {
-    // TODO (Sesión 1): reemplazar por supabase.auth.signInWithPassword(...)
-    const mockUser = { id: 'demo', email }
-    setUser(mockUser)
-    return { user: mockUser, error: null }
+  async function signIn(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { user: data?.user ?? null, error };
   }
 
-  async function signUp(email /*, password */) {
-    // TODO (Sesión 1): reemplazar por supabase.auth.signUp(...)
-    const mockUser = { id: 'demo', email }
-    setUser(mockUser)
-    return { user: mockUser, error: null }
+  async function signUp(email, password) {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    return { user: data?.user ?? null, error };
   }
 
   async function signOut() {
-    // TODO (Sesión 1): reemplazar por supabase.auth.signOut()
-    setUser(null)
+    await supabase.auth.signOut();
   }
 
-  const value = { user, loading, signIn, signUp, signOut }
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  const value = { user, loading, signIn, signUp, signOut };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth debe usarse dentro de <AuthProvider>')
-  return ctx
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth debe usarse dentro de <AuthProvider>");
+  return ctx;
 }
