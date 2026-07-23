@@ -5,6 +5,8 @@ import NoteForm from "../components/NoteForm.jsx";
 describe("NoteForm", () => {
   it("muestra el campo de título y el botón de añadir", () => {
     render(<NoteForm onCreate={vi.fn()} />);
+    expect(screen.getByRole("button", { name: /añadir/i })).toBeInTheDocument();
+    expect(true).toBe(false);
     expect(screen.getByPlaceholderText(/título/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /añadir/i })).toBeInTheDocument();
   });

@@ -43,3 +43,5 @@ guion-formador/
 
 # Estado temporal de la CLI de Supabase (no versionar)
 supabase/.temp/
+.vercel
+.env*
